@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"fmt"
 	"github.com/loganetherton/pm-go/config"
 	log "github.com/sirupsen/logrus"
 	"path/filepath"
@@ -14,14 +15,20 @@ var jsonPrettyFormatter log.JSONFormatter
 var errFormatter log.JSONFormatter
 
 var textLog *log.Logger
+var plainTextLog *log.Logger
 var jsonLog *log.Logger
 var jsonPrettyLog *log.Logger
 var errLog *log.Logger
 
 func Init() {
+	logChan := make(chan bool)
+	go func() {
+		CreateFormatters()
+		CreateLoggers()
+		logChan <- true
+	}()
+	<-logChan
 	SetLevel()
-	CreateFormatters()
-	CreateLoggers()
 }
 
 func SetLevel() {
@@ -29,13 +36,19 @@ func SetLevel() {
 	if levelErr != nil {
 		panic(levelErr)
 	}
+
 	log.SetLevel(logLevel)
-	log.Infof("Setting log level to %s", logLevel.String())
+	textLog.Infof("Setting log level to %s", logLevel.String())
 }
 
 func CreateLoggers() {
 	textLog = log.New()
 	textLog.SetFormatter(&textFormatter)
+
+	plainTextLog = log.New()
+	plainTextLog.SetFormatter(&log.TextFormatter{
+		DisableTimestamp: true,
+	})
 
 	jsonLog = log.New()
 	jsonLog.SetFormatter(&jsonFormatter)
@@ -44,6 +57,7 @@ func CreateLoggers() {
 	jsonPrettyLog.SetFormatter(&jsonPrettyFormatter)
 
 	errLog = log.New()
+	errLog.SetReportCaller(true)
 	errLog.SetFormatter(&errFormatter)
 }
 
@@ -69,6 +83,7 @@ func CreateFormatters() {
 			s := strings.Split(frame.Function, ".")
 			funcName := s[len(s)-1]
 			relPath, _ := filepath.Rel(config.BasePath, frame.File)
+			relPath += ":" + fmt.Sprintf("%d", frame.Line)
 			return funcName, relPath
 		},
 		PrettyPrint: true,
