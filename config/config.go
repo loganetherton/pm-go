@@ -5,17 +5,20 @@ import (
 	"path/filepath"
 )
 
+/*
+Application directory paths
+*/
 var cwd, _ = os.Getwd()
 var BasePath = filepath.Join(cwd, "..")
 
 /*
-Logging configuration
+*
+Application environment
 */
-var LogLevel = os.Getenv("LOG_LEVEL")
+var appEnv = os.Getenv("APP_ENV")
+var IsDev = appEnv == "dev" || appEnv == "development"
+var IsTest = appEnv == "test"
+var IsProd = appEnv == "prod" || appEnv == "production"
 
-/*
-Common formats
-*/
-var DateFormat = "2006-01-02"
-var DateTimeFormat = "2006-01-02 15:04:05"
-var DateTimeTzFormat = "2006-01-02 15:04:05 -0700"
+// LogLevel is used to set the level of logging
+var LogLevel = os.Getenv("LOG_LEVEL")
