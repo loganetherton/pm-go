@@ -15,10 +15,10 @@ var BasePath = filepath.Join(cwd, "..")
 *
 Application environment
 */
-var appEnv = os.Getenv("APP_ENV")
-var IsDev = appEnv == "dev" || appEnv == "development"
-var IsTest = appEnv == "test"
-var IsProd = appEnv == "prod" || appEnv == "production"
+var AppEnv = os.Getenv("APP_ENV")
+var IsDev = AppEnv == "dev" || AppEnv == "development"
+var IsTest = AppEnv == "test"
+var IsProd = AppEnv == "prod" || AppEnv == "production"
 
 // LogLevel is used to set the level of logging
 var LogLevel = os.Getenv("LOG_LEVEL")

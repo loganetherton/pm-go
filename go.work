@@ -1,11 +1,14 @@
 go 1.19
 
 use (
+	./assets
 	./cmd
 	./config
 	./controllers
+	./db
 	./logging
 	./main
-	./models
+	./types
 	./utils
+	./web
 )
